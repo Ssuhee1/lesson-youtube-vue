@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <style>
+        .box {
+            background-color: purple;
+            height: 200px;
+            width: 200px;
+        }
+        .box.two {
+            background-color: red;
+        }
+        .box.three {
+            background-color: blue;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+        .notes {
+            background-color: 	#E5E4E2;
+            margin-left: 50px;
+            padding: 10px;
+        }
+        .lessonTitle{
+            cursor: pointer;
+            margin: 0;
+        }
+        .lessonTitle:hover { 
+            color: blue;
+        }
+        input { 
+            margin: 10px; 
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="lesson">
+            <h4 v-on:click="lessonBodyOne = !lessonBodyOne" class="lessonTitle">Lesson 1 : Hello world & Variable and directives</h4>
+            <div v-if="lessonBodyOne">
+                <h5>Hello world</h5>
+                <div class="notes">
+                    {{ greeting }}
+                    <input v-model="greeting"/>
+                </div>
+                <h5>Directives</h5>
+                <div class="notes">
+                    <div v-if="isVisible" class="box"></div>
+                    <div v-else-if="isVisible2" class="box two"></div>
+                    <div v-else class="box three"></div>
+                </div>
+
+                <!-- Not show in the window. But it shows on the DOM -->
+                <div v-show="isVisible" class="box four"></div>
+            </div>
+        </div>
+        <hr/>
+        <div class="lesson two">
+            <h4 v-on:click="lessonBodyTwo = !lessonBodyTwo" class="lessonTitle">Lesson 2 : Event & Methods</h4>
+            <div v-if="lessonBodyTwo">
+                <h5>Button click event</h5>
+                <div class="notes">
+                    <button v-on:click="isVisible3 = !isVisible3">Toggle Box1</button>
+                    <button @click="isVisible3 = !isVisible3">Toggle Box2</button>
+                    <button @click="toggleBox">Toggle Box3</button>
+                    <div v-if="isVisible3" class="box"></div>
+        
+                </div>
+                <h5>Keyboard event</h5>
+                <div class="notes">
+                    <input @keyup.enter='greet(greeting + "!!!")' v-model="greeting"/>
+                    <button @click.right="toggleBox">Toggle</button>
+                    <button @click.prevent.stop="toggleBox">Toggle</button>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="lesson three">
+            <h4 v-on:click="lessonBodyThree = !lessonBodyThree" class="lessonTitle">Lesson 3 : Custom Component</h4>
+            <div v-if="lessonBodyThree">
+                <h5>Form</h5>
+                <div class="notes">
+                    <login-form/>
+                </div>
+                <h5></h5>
+                <div class="notes">
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="lesson four">
+            <!-- <h4 v-on:click="lessonBodyFour = !lessonBodyFour" class="lessonTitle" >Lesson 4 : Component and Props</h4> -->
+            <h4 class="lessonTitle" >
+                <a href="./lesson4.html">
+                    Lesson 4 : Component and Props
+                </a>
+            </h4>
+        </div>
+        <hr/>
+
+
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+        let app = Vue.createApp({
+            data: () => ({
+                greeting: "Hello Vue",
+                isVisible: false, 
+                isVisible2: true,
+                isVisible3: false,
+                lessonBodyOne: false,
+                lessonBodyTwo: false, 
+                lessonBodyThree: false,
+                lessonBodyFour: false
+            }),
+            methods: {
+                toggleBox() {
+                    this.isVisible3 = !this.isVisible3
+                }, 
+                greet(greeting) {
+                    console.log(greeting)
+                }
+            }
+        })
+        app.component('login-form', {
+            template: `
+                <form @submit.prevent="handleSubmit(e)">
+                    <h1>{{ title }}</h1>
+                    <custom-input type='email' v-bind:label='emailLabel' />
+                    <custom-input type='password' v-bind:label='passwordLabel' />
+                    <button type='submit'>Log in</button>
+                </form>
+            `,
+            components : ['custom-input'],
+            data: () =>({
+                title: 'Login Form', 
+                email: '', 
+                password: '',
+                emailLabel: 'Email', 
+                passwordLabel: "Password"
+            }), 
+            methods: {
+                handleSubmit() {
+                    console.log(this.email, this.password)
+                }
+            }
+        })
+        app.component('custom-input', {
+            template: `
+            <label>
+                {{ label }}
+                <input type='text' />
+            </label>
+            `,
+            props: ['label']
+        })
+        app.mount('#app')
+    </script>
+</body>
+</html>
